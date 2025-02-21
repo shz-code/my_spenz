@@ -1,17 +1,19 @@
 <script setup lang="ts">
-import AppButton from './components/ui/button/AppButton.vue'
+import AppHeader from './components/AppHeader.vue'
+import { useUtilsStore } from './stores/utilsStore'
+
+const { utils } = useUtilsStore()
 </script>
 
 <template>
-  <header class="bg-slate-800 text-white">Hello to my spenz</header>
+  <AppHeader />
 
-  <nav>
-    <router-link :to="{ name: 'Home' }">Home</router-link>
-    <router-link :to="{ name: 'About' }">About</router-link>
-  </nav>
-
-  <AppButton>Shadcn Button</AppButton>
-  <main>
+  <main class="container py-4">
+    <div class="mb-4">
+      <h3>
+        Selected Mode: <span class="text-2xl">{{ utils.preferredMode }}</span>
+      </h3>
+    </div>
     <RouterView />
   </main>
 </template>
