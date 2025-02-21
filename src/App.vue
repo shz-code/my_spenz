@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <header></header>
+  <header>Hello to my spenz</header>
 
   <nav>
     <router-link :to="{ name: 'Home' }">Home</router-link>
