@@ -8,13 +8,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 import { account, ID } from '@/lib/appwrite'
 import { useForm } from 'vee-validate'
 import { registerValidator } from '@/lib/validator'
-import { FormControl, FormField, FormLabel, FormMessage } from '@/components/ui/form'
-import FormItem from '@/components/ui/form/FormItem.vue'
 import { ref } from 'vue'
+import AppFormField from '@/components/AppFormField.vue'
 
 const { handleSubmit } = useForm({
   validationSchema: registerValidator,
@@ -43,49 +41,10 @@ const onSubmit = handleSubmit(async (values) => {
       </CardHeader>
       <CardContent>
         <form @submit.prevent="onSubmit" class="space-y-2">
-          <FormField v-slot="{ componentField }" name="name">
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter your name" v-bind="componentField" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
-
-          <FormField v-slot="{ componentField }" name="email">
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter your email" v-bind="componentField" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
-
-          <FormField v-slot="{ componentField }" name="password">
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input placeholder="Create a password" type="password" v-bind="componentField" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
-
-          <FormField v-slot="{ componentField }" name="confirmPassword">
-            <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Confirm your password"
-                  type="password"
-                  v-bind="componentField"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
+          <AppFormField name="name" placeholder="Enter your name" />
+          <AppFormField name="email" placeholder="Enter your email" />
+          <AppFormField name="password" placeholder="Create a password" />
+          <AppFormField name="confirmPassword" placeholder="Confirm your password" />
           <div class="pt-2">
             <Button
               class="w-full"
