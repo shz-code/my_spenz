@@ -3,15 +3,18 @@ import type { HTMLAttributes } from 'vue'
 import { cn } from '@/lib/utils'
 import { Primitive, type PrimitiveProps } from 'reka-ui'
 import { type ButtonVariants, buttonVariants } from '.'
+import { Loader2 } from 'lucide-vue-next'
 
 interface Props extends PrimitiveProps {
   variant?: ButtonVariants['variant']
   size?: ButtonVariants['size']
   class?: HTMLAttributes['class']
+  isLoading?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   as: 'button',
+  isLoading: false,
 })
 </script>
 
@@ -21,6 +24,7 @@ const props = withDefaults(defineProps<Props>(), {
     :as-child="asChild"
     :class="cn(buttonVariants({ variant, size }), props.class)"
   >
+    <Loader2 v-if="isLoading" class="w-4 h-4 animate-spin" />
     <slot />
   </Primitive>
 </template>

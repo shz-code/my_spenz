@@ -12,7 +12,6 @@ import Toaster from '@/components/ui/toast/Toaster.vue'
 
 <template>
   <AppHeader />
-
   <Toaster />
 
   <PatternBackground
@@ -20,8 +19,9 @@ import Toaster from '@/components/ui/toast/Toaster.vue'
     :direction="PATTERN_BACKGROUND_DIRECTION.TopRight"
     :variant="PATTERN_BACKGROUND_VARIANT.Dot"
     :speed="PATTERN_BACKGROUND_SPEED.Slow"
+    class="container py-8 flex-grow"
   >
-    <main class="container py-8 flex-1 relative">
+    <main class="relative">
       <RouterView />
     </main>
   </PatternBackground>

@@ -7,3 +7,17 @@ export const addExpenseValidator = toTypedSchema(
     category: z.string().nonempty(),
   }),
 )
+
+export const registerValidator = toTypedSchema(
+  z
+    .object({
+      email: z.string().email(),
+      name: z.string().nonempty(),
+      password: z.string().min(8),
+      confirmPassword: z.string().min(8),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: 'Passwords do not match',
+      path: ['confirmPassword'], // This will attach the error to the confirmPassword field
+    }),
+)
