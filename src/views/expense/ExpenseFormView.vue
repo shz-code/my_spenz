@@ -8,22 +8,25 @@ import SelectContent from '@/components/ui/select/SelectContent.vue'
 import SelectGroup from '@/components/ui/select/SelectGroup.vue'
 import SelectLabel from '@/components/ui/select/SelectLabel.vue'
 import SelectItem from '@/components/ui/select/SelectItem.vue'
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useForm } from 'vee-validate'
+import { addExpenseValidator } from '@/lib/validator'
+import { toast } from '@/components/ui/toast'
 
 const categories = ['Food', 'Transportation', 'Entertainment', 'Utilities', 'Other']
 
-const handleSubmit = () => {
-  // Implement expense creation logic here
-  console.log('Add expense')
-}
+const { handleSubmit } = useForm({
+  validationSchema: addExpenseValidator,
+})
+
+const onSubmit = handleSubmit((values) => {
+  toast({
+    title: 'Expense added',
+    description: `You have added an expense of $${values.amount} under the category of ${values.category}`,
+  })
+  console.log(values)
+})
 </script>
 
 <template>
@@ -34,20 +37,21 @@ const handleSubmit = () => {
         <CardDescription>Add a new expense</CardDescription>
       </CardHeader>
       <CardContent>
-        <Form class="space-y-4" @submit.prevent="handleSubmit">
-          <FormField name="amount">
+        <form class="space-y-4" @submit.prevent="onSubmit">
+          <FormField v-slot="{ componentField }" name="amount">
             <FormItem>
               <FormLabel>Amount</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" />
+                <Input placeholder="shadcn" v-bind="componentField" type="number" />
               </FormControl>
+              <FormMessage />
             </FormItem>
           </FormField>
-          <FormField name="category">
+          <FormField v-slot="{ componentField }" name="category">
             <FormItem>
               <FormLabel>Category</FormLabel>
               <FormControl>
-                <Select>
+                <Select v-bind="componentField">
                   <SelectTrigger>
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
@@ -59,13 +63,12 @@ const handleSubmit = () => {
                   </SelectContent>
                 </Select>
               </FormControl>
+              <FormMessage />
             </FormItem>
           </FormField>
-        </Form>
+          <Button type="submit">Add Expense</Button>
+        </form>
       </CardContent>
-      <CardFooter>
-        <Button type="submit">Add Expense</Button>
-      </CardFooter>
     </Card>
   </div>
 </template>

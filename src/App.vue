@@ -7,10 +7,13 @@ import {
   PATTERN_BACKGROUND_VARIANT,
 } from './components/backgrounds'
 import PatternBackground from './components/backgrounds/PatternBackground.vue'
+import Toaster from '@/components/ui/toast/Toaster.vue'
 </script>
 
 <template>
   <AppHeader />
+
+  <Toaster />
 
   <PatternBackground
     :animate="true"
