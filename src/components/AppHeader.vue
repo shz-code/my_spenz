@@ -5,6 +5,7 @@ import { Switch } from '@/components/ui/switch'
 import { ref, watchEffect } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router'
+import MobileMenu from './MobileMenu.vue'
 
 const router = useRouter()
 
@@ -41,7 +42,7 @@ const handleLogout = () => {
       <h1 class="text-lg font-semibold">
         <router-link :to="{ name: 'Home' }">Expense Tracker</router-link>
       </h1>
-      <nav class="flex items-center space-x-4">
+      <nav class="items-center space-x-4 hidden md:flex">
         <router-link :to="{ name: 'ExpenseList' }">
           <Button variant="ghost"> Expenses </Button>
         </router-link>
@@ -61,7 +62,11 @@ const handleLogout = () => {
           <Switch v-model="toggleState" @click="toggleTheme" />
           <Moon :size="16" />
         </div>
-        <!-- <Button variant="ghost" @click="handleLogout">Logout</Button> -->
+      </nav>
+
+      <!-- Mobile menu -->
+      <nav class="md:hidden">
+        <MobileMenu />
       </nav>
     </div>
   </header>
