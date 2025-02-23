@@ -6,7 +6,7 @@ import CardTitle from './ui/card/CardTitle.vue'
 </script>
 
 <template>
-  <Card class="bg-gradient-to-tr from-slate-700 to-slate-950 text-white">
+  <Card class="bg-gradient-to-tr from-slate-700 via-slate-800 to-slate-950 text-white">
     <CardHeader>
       <CardTitle><slot name="title" /></CardTitle>
     </CardHeader>

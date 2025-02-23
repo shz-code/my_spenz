@@ -37,7 +37,7 @@ const handleLogout = () => {
 </script>
 
 <template>
-  <header class="border-b">
+  <header class="border-b sticky top-0 bg-background z-10">
     <div class="container flex items-center justify-between py-4 px-4">
       <h1 class="text-lg font-semibold">
         <router-link :to="{ name: 'Home' }">Expense Tracker</router-link>
