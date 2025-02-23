@@ -6,6 +6,7 @@ import RegisterView from '@/views/auth/RegisterView.vue'
 import ExpenseListView from '@/views/expense/ExpenseListView.vue'
 import ExpenseFormView from '@/views/expense/ExpenseFormView.vue'
 import SettingsView from '@/views/SettingsView.vue'
+import CallbackView from '@/views/auth/CallbackView.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: HomeView },
@@ -14,6 +15,7 @@ const routes = [
     children: [
       { path: 'login', name: 'Login', component: LoginView },
       { path: 'register', name: 'Register', component: RegisterView },
+      { path: 'callback', name: 'Callback', component: CallbackView },
     ],
   },
   {
@@ -30,4 +32,18 @@ const routes = [
 export const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+
+router.beforeEach((to, from, next) => {
+  const publicPages = ['Login', 'Register', 'Callback']
+  const authRequired = !publicPages.includes(to.name as string)
+  const loggedIn = localStorage.getItem('user')
+
+  if (authRequired && !loggedIn) {
+    next({ name: 'Login' })
+  } else if (!authRequired && loggedIn) {
+    next({ name: 'Home' })
+  } else {
+    next()
+  }
 })

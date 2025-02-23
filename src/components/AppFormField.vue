@@ -5,19 +5,22 @@ import { Input } from './ui/input'
 interface Props {
   name: string
   placeholder?: string
+  type?: string
+  label?: string
 }
 
 withDefaults(defineProps<Props>(), {
   placeholder: 'Enter value...',
+  type: 'text',
 })
 </script>
 
 <template>
   <FormField v-slot="{ componentField }" :name="name">
     <FormItem>
-      <FormLabel>{{ name.charAt(0).toUpperCase() + name.slice(1) }}</FormLabel>
+      <FormLabel>{{ label ? label : name.charAt(0).toUpperCase() + name.slice(1) }}</FormLabel>
       <FormControl>
-        <Input :placeholder="placeholder" v-bind="componentField" />
+        <Input :placeholder="placeholder" v-bind="componentField" :type="type" />
       </FormControl>
       <FormMessage />
     </FormItem>

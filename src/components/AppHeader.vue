@@ -3,8 +3,14 @@ import { Moon, Sun } from 'lucide-vue-next'
 import { Button } from './ui/button'
 import { Switch } from '@/components/ui/switch'
 import { ref, watchEffect } from 'vue'
+import { useAuthStore } from '@/stores/authStore'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const theme = ref(localStorage.getItem('theme') || 'light')
+
+const { auth, logout } = useAuthStore()
 
 const toggleTheme = () => {
   theme.value = theme.value === 'light' ? 'dark' : 'light'
@@ -22,6 +28,11 @@ watchEffect(() => {
     toggleState.value = false
   }
 })
+
+const handleLogout = () => {
+  logout()
+  router.push({ name: 'Login' })
+}
 </script>
 
 <template>
@@ -31,15 +42,18 @@ watchEffect(() => {
         <router-link :to="{ name: 'Home' }">Expense Tracker</router-link>
       </h1>
       <nav class="flex items-center space-x-4">
-        <router-link :to="{ name: 'Login' }">
-          <Button variant="ghost"> Login </Button>
-        </router-link>
         <router-link :to="{ name: 'ExpenseList' }">
           <Button variant="ghost"> Expenses </Button>
         </router-link>
         <router-link :to="{ name: 'Settings' }">
           <Button variant="ghost"> Settings </Button>
         </router-link>
+
+        <router-link v-if="!auth.user" :to="{ name: 'Login' }">
+          <Button variant="default"> Login </Button>
+        </router-link>
+
+        <Button v-if="auth.user" variant="destructive" @click="handleLogout"> Logout </Button>
 
         <!-- Theme Switcher -->
         <div class="flex items-center space-x-2">

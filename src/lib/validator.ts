@@ -21,3 +21,11 @@ export const registerValidator = toTypedSchema(
       path: ['confirmPassword'], // This will attach the error to the confirmPassword field
     }),
 )
+
+export const loginValidator = toTypedSchema(
+  z.object({
+    email: z.string().email(),
+
+    password: z.string().min(8),
+  }),
+)
