@@ -25,7 +25,15 @@ export const registerValidator = toTypedSchema(
 export const loginValidator = toTypedSchema(
   z.object({
     email: z.string().email(),
-
     password: z.string().min(8),
+  }),
+)
+
+export const profileUpdateValidator = toTypedSchema(
+  z.object({
+    email: z.string().email(),
+    name: z.string(),
+    currency: z.enum(['USD', 'BDT']),
+    emailNotification: z.boolean(),
   }),
 )

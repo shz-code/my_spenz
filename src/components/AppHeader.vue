@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { Moon, Sun } from 'lucide-vue-next'
-import { Button } from './ui/button'
 import { Switch } from '@/components/ui/switch'
-import { ref, watchEffect } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
+import { Moon, Sun } from 'lucide-vue-next'
+import { ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import MobileMenu from './MobileMenu.vue'
+import { Button } from './ui/button'
 
 const router = useRouter()
 
@@ -32,7 +32,9 @@ watchEffect(() => {
 
 const handleLogout = () => {
   logout()
-  router.push({ name: 'Login' })
+  setTimeout(() => {
+    router.replace({ name: 'Login' })
+  }, 2000)
 }
 </script>
 

@@ -1,10 +1,8 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import AppCheckBox from '@/components/AppCheckBox.vue'
+import AppFormField from '@/components/AppFormField.vue'
+import AppSelect from '@/components/AppSelect.vue'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select } from '@/components/ui/select'
 import {
   Card,
   CardContent,
@@ -13,11 +11,21 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { profileUpdateValidator } from '@/lib/validator'
+import { useForm } from 'vee-validate'
+import { ref } from 'vue'
 
-const user = ref({
-  name: 'John Doe',
-  email: 'john@example.com',
+const { handleSubmit } = useForm({
+  validationSchema: profileUpdateValidator,
+  initialValues: {
+    emailNotification: true,
+  },
 })
+
+const options = [
+  { value: 'BDT', label: 'BDT' },
+  { value: 'USD', label: 'USD' },
+]
 
 const preferences = ref({
   notifications: true,
@@ -34,10 +42,11 @@ const enable2FA = () => {
   console.log('Enabling 2FA')
 }
 
-const saveSettings = () => {
+const saveSettings = handleSubmit(async (values) => {
   // Implement settings save logic
-  console.log('Saving settings:', { user: user.value, preferences: preferences.value })
-}
+  console.log(values)
+  console.log('Saving settings:', { preferences: preferences.value })
+})
 </script>
 
 <template>
@@ -49,40 +58,24 @@ const saveSettings = () => {
       </CardHeader>
       <CardContent>
         <div>
-          <h3 class="text-xl font-semibold mb-2">Profile</h3>
+          <h4>Profile</h4>
           <div class="space-y-2">
-            <div>
-              <Label for="name">Name</Label>
-              <Input id="name" v-model="user.name" />
-            </div>
-            <div>
-              <Label for="email">Email</Label>
-              <Input id="email" v-model="user.email" type="email" />
-            </div>
+            <AppFormField name="name" placeholder="Enter your name" />
+            <AppFormField name="email" placeholder="Enter your email" type="email" />
           </div>
         </div>
-        <div>
-          <h3 class="text-xl font-semibold mb-2">Preferences</h3>
-          <div class="space-y-2">
-            <div class="flex items-center space-x-2">
-              <Checkbox id="notifications" v-model="preferences.notifications" />
-              <Label for="notifications">Enable email notifications</Label>
-            </div>
-            <div>
-              <Label for="currency">Currency</Label>
-              <Select id="currency" v-model="preferences.currency">
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="GBP">GBP</option>
-              </Select>
-            </div>
+        <div class="mt-6">
+          <h4>Preferences</h4>
+          <div class="space-y-4 mt-4">
+            <AppCheckBox name="emailNotification" label="Enable email notifications" />
+            <AppSelect name="currency" :options="options" placeholder="Select currency" />
           </div>
         </div>
       </CardContent>
       <CardFooter>
-        <div class="space-y-6 max-w-md">
+        <div class="space-y-4 max-w-md">
           <div>
-            <h3 class="text-xl font-semibold mb-2">Security</h3>
+            <h4>Security</h4>
             <div class="space-y-2">
               <Button @click="changePassword">Change Password</Button>
               <Button variant="outline" @click="enable2FA">Enable Two-Factor Authentication</Button>

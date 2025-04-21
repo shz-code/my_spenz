@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useRouter } from 'vue-router'
+import AppFormField from '@/components/AppFormField.vue'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -9,14 +9,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Github } from 'lucide-vue-next'
 import { account } from '@/lib/appwrite'
-import { OAuthProvider } from 'appwrite'
-import { useForm } from 'vee-validate'
 import { loginValidator } from '@/lib/validator'
-import AppFormField from '@/components/AppFormField.vue'
 import { useAuthStore } from '@/stores/authStore'
+import { OAuthProvider } from 'appwrite'
+import { Github } from 'lucide-vue-next'
+import { useForm } from 'vee-validate'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const { login } = useAuthStore()
