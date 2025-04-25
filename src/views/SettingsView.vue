@@ -11,8 +11,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { profileUpdateValidator } from '@/lib/validator'
-import { getProfile } from '@/services/profile'
+import { databases, ID } from '@/lib/appwrite'
+import { userUpdateValidator } from '@/lib/validator'
+import { getUserAccount } from '@/services/profile'
 import type { Models } from 'appwrite'
 import { useForm } from 'vee-validate'
 import { onMounted, ref } from 'vue'
@@ -23,9 +24,8 @@ const error = ref<boolean>(false)
 
 onMounted(async () => {
   try {
-    user.value = await getProfile()
+    user.value = await getUserAccount()
     setFieldValue('name', user.value?.name)
-    setFieldValue('email', user.value?.email)
   } catch (err) {
     error.value = true
     console.error(err)
@@ -35,7 +35,7 @@ onMounted(async () => {
 })
 
 const { handleSubmit, setFieldValue } = useForm({
-  validationSchema: profileUpdateValidator,
+  validationSchema: userUpdateValidator,
   initialValues: {
     emailNotification: true,
   },
@@ -46,15 +46,26 @@ const options = [
   { value: 'USD', label: 'USD' },
 ]
 
-const preferences = ref({
-  notifications: true,
-  currency: 'USD',
-})
+console.log(import.meta.env.VITE_APPWRITE_DATABASE_ID)
 
 const saveSettings = handleSubmit(async (values) => {
-  // Implement settings save logic
-  console.log(values)
-  console.log('Saving settings:', { preferences: preferences.value })
+  loading.value = true
+  // await updateUserAccount(values.name)
+
+  const createProfile = await databases.createDocument(
+    import.meta.env.VITE_APPWRITE_DB_ID,
+    import.meta.env.VITE_APPWRITE_PROFILE_ID,
+    ID.unique(),
+    {
+      name: values.name,
+      emailNotification: values.emailNotification,
+      currency: values.currency,
+    },
+  )
+
+  console.log('Profile created:', createProfile)
+
+  loading.value = false
 })
 </script>
 
@@ -70,7 +81,6 @@ const saveSettings = handleSubmit(async (values) => {
           <h4>Profile</h4>
           <div class="space-y-2">
             <AppFormField name="name" placeholder="Enter your name" />
-            <AppFormField name="email" placeholder="Enter your email" type="email" />
           </div>
         </div>
         <div class="mt-6">
@@ -83,7 +93,9 @@ const saveSettings = handleSubmit(async (values) => {
       </CardContent>
       <CardFooter>
         <div class="space-y-4 max-w-md">
-          <Button @click="saveSettings" :disabled="loading || error">Save Settings</Button>
+          <Button @click="saveSettings" :disabled="loading || error" :isLoading="loading"
+            >Save Settings</Button
+          >
         </div>
       </CardFooter>
     </Card>

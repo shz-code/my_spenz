@@ -29,9 +29,8 @@ export const loginValidator = toTypedSchema(
   }),
 )
 
-export const profileUpdateValidator = toTypedSchema(
+export const userUpdateValidator = toTypedSchema(
   z.object({
-    email: z.string().email(),
     name: z.string(),
     currency: z.enum(['USD', 'BDT']),
     emailNotification: z.boolean(),
