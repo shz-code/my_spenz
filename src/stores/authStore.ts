@@ -1,6 +1,9 @@
-import { toast } from '@/components/ui/toast'
-import { account } from '@/lib/appwrite'
-import { AppwriteException, ID, type Models } from 'appwrite'
+import {
+  loginWithEmailAndPassword,
+  logoutAccount,
+  registerWithEmailAndPassword,
+} from '@/services/auth'
+import { type Models } from 'appwrite'
 import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 
@@ -18,43 +21,21 @@ export const useAuthStore = defineStore('auth', () => {
   const auth = reactive<{ user: Models.User<Preferences> | null }>({ user: null })
 
   const login = async (email: string, password: string) => {
-    try {
-      await account.createEmailPasswordSession(email, password)
-      const user = await account.get()
-      auth.user = user
-      setLocalStorage(user)
-      toast({
-        title: 'Login successful',
-        description: 'You have been successfully authenticated',
-      })
+    const user = await loginWithEmailAndPassword(email, password)
+    if (user) {
+      setUser(user)
       return user
-    } catch (error) {
-      if (error instanceof AppwriteException) {
-        toast({
-          title: 'Login failed',
-          description: error.message,
-          variant: 'destructive',
-        })
-      }
     }
+    return null
   }
 
   const register = async (email: string, password: string, name: string) => {
-    try {
-      const user = await account.create(ID.unique(), email, password, name)
-      toast({
-        title: 'Registration Successful',
-        description: 'Please login to continue',
-      })
+    const user = await registerWithEmailAndPassword(email, password, name)
+    if (user) {
+      setUser(user)
       return user
-    } catch (error) {
-      if (error instanceof AppwriteException)
-        toast({
-          title: 'Registration failed',
-          description: error.message,
-          variant: 'destructive',
-        })
     }
+    return null
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,13 +45,9 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const logout = async () => {
-    await account.deleteSession('current')
-    auth.user = null
+    await logoutAccount()
     resetLocalStorage()
-    toast({
-      title: 'Logged out',
-      description: 'You have been logged out',
-    })
+    auth.user = null
   }
 
   return { setUser, logout, auth, login, register }

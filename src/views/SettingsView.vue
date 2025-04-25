@@ -12,10 +12,29 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { profileUpdateValidator } from '@/lib/validator'
+import { getProfile } from '@/services/profile'
+import type { Models } from 'appwrite'
 import { useForm } from 'vee-validate'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
-const { handleSubmit } = useForm({
+const user = ref<Models.User<Models.Preferences> | null>(null)
+const loading = ref(true)
+const error = ref<boolean>(false)
+
+onMounted(async () => {
+  try {
+    user.value = await getProfile()
+    setFieldValue('name', user.value?.name)
+    setFieldValue('email', user.value?.email)
+  } catch (err) {
+    error.value = true
+    console.error(err)
+  } finally {
+    loading.value = false
+  }
+})
+
+const { handleSubmit, setFieldValue } = useForm({
   validationSchema: profileUpdateValidator,
   initialValues: {
     emailNotification: true,
@@ -31,16 +50,6 @@ const preferences = ref({
   notifications: true,
   currency: 'USD',
 })
-
-const changePassword = () => {
-  // Implement change password logic
-  console.log('Changing password')
-}
-
-const enable2FA = () => {
-  // Implement 2FA enablement logic
-  console.log('Enabling 2FA')
-}
 
 const saveSettings = handleSubmit(async (values) => {
   // Implement settings save logic
@@ -74,14 +83,7 @@ const saveSettings = handleSubmit(async (values) => {
       </CardContent>
       <CardFooter>
         <div class="space-y-4 max-w-md">
-          <div>
-            <h4>Security</h4>
-            <div class="space-y-2">
-              <Button @click="changePassword">Change Password</Button>
-              <Button variant="outline" @click="enable2FA">Enable Two-Factor Authentication</Button>
-            </div>
-          </div>
-          <Button @click="saveSettings">Save Settings</Button>
+          <Button @click="saveSettings" :disabled="loading || error">Save Settings</Button>
         </div>
       </CardFooter>
     </Card>
