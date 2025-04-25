@@ -13,18 +13,22 @@ interface Props {
   name: string
   placeholder?: string
   label?: string
+  noLabel?: boolean
   options: { value: string; label: string }[]
 }
 
 withDefaults(defineProps<Props>(), {
   placeholder: 'Enter value...',
+  noLabel: false,
 })
 </script>
 
 <template>
   <FormField v-slot="{ componentField }" :name="name">
     <FormItem>
-      <FormLabel>{{ label ? label : name.charAt(0).toUpperCase() + name.slice(1) }}</FormLabel>
+      <FormLabel v-if="!noLabel">{{
+        label ? label : name.charAt(0).toUpperCase() + name.slice(1)
+      }}</FormLabel>
 
       <Select v-bind="componentField">
         <FormControl>
