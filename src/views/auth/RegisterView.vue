@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import AppFormField from '@/components/AppFormField.vue'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -8,12 +9,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { useForm } from 'vee-validate'
 import { registerValidator } from '@/lib/validator'
-import { ref } from 'vue'
-import AppFormField from '@/components/AppFormField.vue'
-import { useAuthStore } from '@/stores/authStore'
 import { router } from '@/router'
+import { createProfile } from '@/services/profile'
+import { useAuthStore } from '@/stores/authStore'
+import { useForm } from 'vee-validate'
+import { ref } from 'vue'
 
 const { handleSubmit } = useForm({
   validationSchema: registerValidator,
@@ -27,7 +28,12 @@ const onSubmit = handleSubmit(async (values) => {
   isLoading.value = true
   const res = await register(values.email, values.password, values.name)
   if (res) {
-    router.push({ name: 'Login' })
+    try {
+      await createProfile(res.$id)
+      router.push({ name: 'Login' })
+    } catch (error) {
+      console.error('Failed to create profile:', error)
+    }
   }
   isLoading.value = false
 })

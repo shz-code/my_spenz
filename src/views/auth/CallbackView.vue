@@ -2,6 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from '@/components/ui/toast'
 import { account } from '@/lib/appwrite'
+import { createProfile } from '@/services/profile'
 import { useAuthStore } from '@/stores/authStore'
 import { CheckCircle, Loader2 } from 'lucide-vue-next'
 import { ref } from 'vue'
@@ -25,6 +26,12 @@ const { setUser } = useAuthStore()
       title: 'Login successful',
       description: 'You have been successfully authenticated',
     })
+
+    try {
+      await createProfile(user.$id)
+    } catch (error) {
+      console.error('Failed to create profile:', error)
+    }
 
     setTimeout(() => {
       router.push('/')

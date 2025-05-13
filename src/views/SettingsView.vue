@@ -11,21 +11,28 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { databases, ID } from '@/lib/appwrite'
 import { userUpdateValidator } from '@/lib/validator'
-import { getUserAccount } from '@/services/profile'
-import type { Models } from 'appwrite'
+import { getProfile, getUserAccount, updateProfile, updateUserAccount } from '@/services/profile'
 import { useForm } from 'vee-validate'
 import { onMounted, ref } from 'vue'
 
-const user = ref<Models.User<Models.Preferences> | null>(null)
+// Update user declaration with a more specific type
+const user = ref<{ $id: string; name: string } | null>(null)
+const profileId = ref<string | null>(null)
+
 const loading = ref(true)
 const error = ref<boolean>(false)
 
 onMounted(async () => {
   try {
     user.value = await getUserAccount()
+
+    const profile = await getProfile(user.value?.$id)
+    profileId.value = profile.$id
+
     setFieldValue('name', user.value?.name)
+    setFieldValue('emailNotification', profile.emailNotification)
+    setFieldValue('currency', profile.currency)
   } catch (err) {
     error.value = true
     console.error(err)
@@ -46,26 +53,22 @@ const options = [
   { value: 'USD', label: 'USD' },
 ]
 
-console.log(import.meta.env.VITE_APPWRITE_DATABASE_ID)
-
 const saveSettings = handleSubmit(async (values) => {
   loading.value = true
-  // await updateUserAccount(values.name)
-
-  const createProfile = await databases.createDocument(
-    import.meta.env.VITE_APPWRITE_DB_ID,
-    import.meta.env.VITE_APPWRITE_PROFILE_ID,
-    ID.unique(),
-    {
-      name: values.name,
-      emailNotification: values.emailNotification,
-      currency: values.currency,
-    },
-  )
-
-  console.log('Profile created:', createProfile)
-
-  loading.value = false
+  try {
+    await updateUserAccount(values.name)
+    if (user.value) {
+      await updateProfile(profileId.value!, {
+        emailNotification: values.emailNotification,
+        currency: values.currency,
+      })
+      console.log('Profile updated successfully')
+    }
+  } catch (error) {
+    console.error('Failed to update profile:', error)
+  } finally {
+    loading.value = false
+  }
 })
 </script>
 
