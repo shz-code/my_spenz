@@ -39,7 +39,7 @@ const onSubmit = handleSubmit(async (values) => {
 })
 
 const handleGithubLogin = async () => {
-  await account.createOAuth2Session(OAuthProvider.Github, 'http://localhost:5173/auth/callback')
+  await account.createOAuth2Session(OAuthProvider.Github, import.meta.env.VITE_OAUTH_REDIRECT_URI)
 }
 </script>
 
